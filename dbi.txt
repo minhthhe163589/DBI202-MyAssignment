@@ -1,0 +1,83 @@
+Create database Assignment_DBI202_IA1604
+
+
+use Assignment_DBI202_IA1604 
+CREATE TABLE Assessment(
+	[AssId] [int] IDENTITY(1,1) NOT NULL primary key,
+	[Name] [nchar](15) NOT NULL,
+	[Type] [nvarchar](15) NULL,
+	[Part] [int] NOT NULL,
+	[Weight] [float] NOT NULL,
+	[CompletionCiteria] [int] NULL,
+	[Duration] [nvarchar](50) NULL,
+	[Noquestion] [int] NULL,
+	[SubjectId] [int] NULL,
+	[Note] [nvarchar](500) NULL,
+ );
+
+ CREATE TABLE [Student](
+	[StudentId] [int] IDENTITY(1,1) NOT NULL primary key,
+	[Dob] [date] NULL,
+	[Name] [nvarchar](50) NOT NULL,
+	[Email] [nvarchar](50) NULL,
+	[Gender] [bit] NULL,
+	[StudentCode] [nvarchar](50) NOT NULL
+);
+
+create table Instructor (
+	[InstructorId] [int] IDENTITY(1,1) NOT NULL primary key,
+	[Dob] [date] NULL,
+	[Name] [nvarchar](50) NOT NULL,
+	[Email] [nvarchar](50) NOT NULL,
+	[Gender] [bit] NULL,
+);
+
+CREATE TABLE [Semester](
+	[SemesterId] [int] IDENTITY(1,1) NOT NULL primary key,
+	[SemesterName] [nchar](15) not NULL,
+	[StartDate] [date] not NULL,
+	[EndDate] [date] not NULL,
+);
+
+ Create table AssesmentMark(
+ 	[StudentId] [int] NOT NULL,
+	[AssId] [int] NOT NULL,
+	[Mark] [int]  not NULL
+	constraint fk_Assessment foreign key (AssId) REFERENCES Assessment(AssId),
+	constraint fk_Student foreign key (StudentId) references Student(StudentId),
+	CONSTRAINT  pk_AssesmentMark primary key(StudentId,AssId)
+);
+
+Create table [Subject]
+(
+	[SubjectId] [int] IDENTITY(1,1) NOT NULL primary key,
+	[SubjectCode] [nchar](10) not NULL,
+	[SubjectName] [nvarchar](50) not NULL
+);
+
+create table [Group]
+(
+	[GroupId] [int] IDENTITY(1,1) NOT NULL primary key,
+	[SubjectId] [int] NOT NULL,
+	[SemesterId] [int] NOT NULL,
+	[GroupCode] [nchar](10) not NULL,
+	constraint fk_Subject foreign key (SubjectId) references [Subject] (SubjectId),
+	constraint fk_Semester foreign key (SemesterId) references [Semester] (SemesterId)
+);
+
+create table Teach
+(
+	[InstructorId] [int] NOT NULL,
+	[GroupId] [int] not NULL,
+	CONSTRAINT  pk_Teach primary key(InstructorId,GroupId),
+	constraint fk_Instructor foreign key (InstructorId) references [Instructor] (InstructorId),
+	constraint fk_Group foreign key (GroupId) references [Group] (GroupId),
+	
+);
+
+CREATE TABLE [Study](
+	
+	StudentId  [int] not null foreign key references Student(StudentId),
+	[GroupId] [int] not null foreign key references [Group](GroupId),
+	CONSTRAINT  pk_Study primary key(StudentId,GroupId)
+);
